@@ -3,8 +3,6 @@
 #include <vector>
 
 #include "vec.h"
-#include "scene.h"
-#include "hit.h"
 
 Point Origin( )
 {

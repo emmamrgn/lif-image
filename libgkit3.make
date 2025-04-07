@@ -70,8 +70,6 @@ OBJECTS := \
 	$(OBJDIR)/image_io.o \
 	$(OBJDIR)/mat.o \
 	$(OBJDIR)/mesh_io.o \
-	$(OBJDIR)/plan.o \
-	$(OBJDIR)/sphere.o \
 	$(OBJDIR)/vec.o \
 
 RESOURCES := \
@@ -144,12 +142,6 @@ $(OBJDIR)/mat.o: src/mat.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/mesh_io.o: src/mesh_io.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/plan.o: src/plan.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/sphere.o: src/sphere.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/vec.o: src/vec.cpp

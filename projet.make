@@ -13,10 +13,10 @@ endif
 ifeq ($(config),debug)
   RESCOMP = windres
   TARGETDIR = bin
-  TARGET = $(TARGETDIR)/tp2
-  OBJDIR = obj/debug/tp2
+  TARGET = $(TARGETDIR)/projet
+  OBJDIR = obj/debug/projet
   DEFINES += -DDEBUG
-  INCLUDES += -I. -Isrc
+  INCLUDES += -I. -Isrc -Iprojets
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -mtune=native -march=native -Wall -Wsign-compare -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -pipe -g
@@ -40,10 +40,10 @@ endif
 ifeq ($(config),release)
   RESCOMP = windres
   TARGETDIR = bin
-  TARGET = $(TARGETDIR)/tp2
-  OBJDIR = obj/release/tp2
+  TARGET = $(TARGETDIR)/projet
+  OBJDIR = obj/release/projet
   DEFINES +=
-  INCLUDES += -I. -Isrc
+  INCLUDES += -I. -Isrc -Iprojets
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -fopenmp -O3 -mtune=native -march=native -Wall -Wsign-compare -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -pipe -flto
@@ -65,7 +65,7 @@ all: prebuild prelink $(TARGET)
 endif
 
 OBJECTS := \
-	$(OBJDIR)/tp2.o \
+	$(OBJDIR)/projet.o \
 
 RESOURCES := \
 
@@ -77,7 +77,7 @@ ifeq (.exe,$(findstring .exe,$(ComSpec)))
 endif
 
 $(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)
-	@echo Linking tp2
+	@echo Linking projet
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -100,7 +100,7 @@ else
 endif
 
 clean:
-	@echo Cleaning tp2
+	@echo Cleaning projet
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(OBJDIR)
@@ -124,7 +124,7 @@ else
 $(OBJECTS): | $(OBJDIR)
 endif
 
-$(OBJDIR)/tp2.o: projets/tp2.cpp
+$(OBJDIR)/projet.o: projets/projet.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

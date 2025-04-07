@@ -4,10 +4,6 @@
 #include <limits>
 #include "vec.h"
 #include "color.h"
-#include "plan.h"
-#include "sphere.h"
-// #include "cube.h"
-#include "scene.h"
 
 const float inf= std::numeric_limits<float>::infinity();
 

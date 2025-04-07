@@ -2,8 +2,7 @@ dofile "gkit.lua"
 
  -- description des projets		 
 projects = {
-	"tp1",
-	"tp2",
+	"projet",
 }
 
 for i, name in ipairs(projects) do
@@ -12,7 +11,7 @@ for i, name in ipairs(projects) do
         kind "ConsoleApp"
         targetdir "bin"
 		links { "libgkit3" }
-		includedirs { ".", "src" }
+		includedirs { ".", "src", "projets" }
 		
         files { "projets/" .. name .. ".cpp" }
 end

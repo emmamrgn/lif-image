@@ -1,6 +1,3 @@
-#ifndef _PLAN_H
-#define _PLAN_H
-
 #include "vec.h"
 #include "color.h"
 
@@ -11,5 +8,3 @@ struct Plan
     Color color;    // couleur
     float mirror; // pourcentage de lumière réfléchie
 };
-
-#endif

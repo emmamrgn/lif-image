@@ -1,6 +1,3 @@
-#ifndef _SOURCE_H
-#define _SOURCE_H
-
 #include "vec.h"
 #include "color.h"
 
@@ -11,5 +8,3 @@ struct Source
     Color color;    // couleur
 
 };
-
-#endif

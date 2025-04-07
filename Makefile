@@ -10,16 +10,14 @@ endif
 
 ifeq ($(config),debug)
   libgkit3_config = debug
-  tp1_config = debug
-  tp2_config = debug
+  projet_config = debug
 endif
 ifeq ($(config),release)
   libgkit3_config = release
-  tp1_config = release
-  tp2_config = release
+  projet_config = release
 endif
 
-PROJECTS := libgkit3 tp1 tp2
+PROJECTS := libgkit3 projet
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -31,22 +29,15 @@ ifneq (,$(libgkit3_config))
 	@${MAKE} --no-print-directory -C . -f libgkit3.make config=$(libgkit3_config)
 endif
 
-tp1: libgkit3
-ifneq (,$(tp1_config))
-	@echo "==== Building tp1 ($(tp1_config)) ===="
-	@${MAKE} --no-print-directory -C . -f tp1.make config=$(tp1_config)
-endif
-
-tp2: libgkit3
-ifneq (,$(tp2_config))
-	@echo "==== Building tp2 ($(tp2_config)) ===="
-	@${MAKE} --no-print-directory -C . -f tp2.make config=$(tp2_config)
+projet: libgkit3
+ifneq (,$(projet_config))
+	@echo "==== Building projet ($(projet_config)) ===="
+	@${MAKE} --no-print-directory -C . -f projet.make config=$(projet_config)
 endif
 
 clean:
 	@${MAKE} --no-print-directory -C . -f libgkit3.make clean
-	@${MAKE} --no-print-directory -C . -f tp1.make clean
-	@${MAKE} --no-print-directory -C . -f tp2.make clean
+	@${MAKE} --no-print-directory -C . -f projet.make clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
@@ -59,7 +50,6 @@ help:
 	@echo "   all (default)"
 	@echo "   clean"
 	@echo "   libgkit3"
-	@echo "   tp1"
-	@echo "   tp2"
+	@echo "   projet"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"
