@@ -11,7 +11,7 @@ for i, name in ipairs(projects) do
         kind "ConsoleApp"
         targetdir "bin"
 		links { "libgkit3" }
-		includedirs { ".", "src", "projets" }
+		includedirs { ".", "src", "projet" }
 		
-        files { "projets/" .. name .. ".cpp" }
+        files { "projet/" .. name .. ".cpp" }
 end

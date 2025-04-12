@@ -1,5 +1,5 @@
-#ifndef _HIT_H
-#define _HIT_H
+#ifndef HIT_H
+#define HIT_H
 
 #include <limits>
 #include "vec.h"
