@@ -11,10 +11,13 @@ endif
 ifeq ($(config),debug)
   libgkit3_config = debug
   projet_config = debug
-endif
-ifeq ($(config),release)
+
+else ifeq ($(config),release)
   libgkit3_config = release
   projet_config = release
+
+else
+  $(error "invalid configuration $(config)")
 endif
 
 PROJECTS := libgkit3 projet
