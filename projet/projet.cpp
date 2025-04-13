@@ -8,26 +8,14 @@
 #include "source.h"
 #include "scene.h"
 #include "hit.h"
+#include "cube.h"
 
 
 int ANTIALIASING = 3;
 // Color BACKGROUND_COLOR = Color(40, 0, 40,1);  
 Color BACKGROUND_COLOR = Color(0.7,0.9,0.9,1);
 
-/**
- * @brief Calcule l'intersection entre un plan et un rayon défini par une origine et une direction.
- * 
- * @param plan Le plan avec lequel tester l'intersection. Il est défini par une normale (n), un point (a), une couleur (color) et une propriété de réflexion (mirror).
- * @param o L'origine du rayon.
- * @param d La direction du rayon.
- * @return Hit Une structure contenant :
- *         - la distance t de l'intersection le long du rayon (inf si aucune intersection valide),
- *         - la normale du plan,
- *         - la couleur du plan,
- *         - la propriété de réflexion du plan.
- * 
- * @note Si t < 0, cela signifie que l'intersection est derrière l'origine du rayon et n'est donc pas valide.
- */
+// Intersection entre un rayon et un plan
 Hit intersect(const Plan& plan, const Point& o, const Vector& d)
 {
     float t = dot(plan.n, Vector(o,plan.a)) / dot(plan.n,d);
@@ -72,6 +60,49 @@ Hit intersect(const Sphere& sphere, const Point& o, const Vector& d)
     else return {inf, Vector(-1,-1,-1), sphere.color, sphere.mirror};
 }
 
+// Intersection entre un rayon et un cube
+Hit intersect(const Cube& cube, const Point& o, const Vector& d)
+{
+    // distances d'intersection entre le rayon et les plans du cube
+    float t_x_min = (cube.p.x - o.x) / d.x;
+    float t_x_max = (cube.p.x + cube.l - o.x) / d.x;
+    float t_y_min = (cube.p.y - o.y) / d.y;
+    float t_y_max = (cube.p.y + cube.l - o.y) / d.y;
+    float t_z_min = (cube.p.z - o.z) / d.z;
+    float t_z_max = (cube.p.z + cube.l - o.z) / d.z;
+
+    // distance minimum et distance maximum 
+    float t_min = std::max({std::min(t_x_min, t_x_max), std::min(t_y_min, t_y_max), std::min(t_z_min, t_z_max)});
+    float t_max = std::min({std::max(t_x_min, t_x_max), std::max(t_y_min, t_y_max), std::max(t_z_min, t_z_max)});
+    // pour le premier std::max/min de chaque ligne, j'ai testé en les inversant au début mais ça ne fonctionnait pas, donc je les laisse comme ça
+
+    // si t_max < 0, le cube est derriere le rayon, on retourne inf
+    if (t_max < 0)
+        return {inf, Vector(-1,-1,-1), cube.color, cube.mirror};
+
+    // si t_min > t_max, le rayon ne touche pas le cube, on retourne inf
+    if (t_min > t_max)
+        return {inf, Vector(-1,-1,-1), cube.color, cube.mirror};
+
+    Vector p_inter_norm;
+
+    // en fonction des cas, on calcule la normale du plan d'intersection
+    if (t_min == t_x_min)
+        p_inter_norm = Vector(-1, 0, 0);
+    else if (t_min == t_x_max)
+        p_inter_norm = Vector(1, 0, 0);
+    else if (t_min == t_y_min)
+        p_inter_norm = Vector(0, -1, 0);
+    else if (t_min == t_y_max)
+        p_inter_norm = Vector(0, 1, 0);
+    else if (t_min == t_z_min)
+        p_inter_norm = Vector(0, 0, -1);
+    else if (t_min == t_z_max)
+        p_inter_norm = Vector(0, 0, 1);
+
+    return {t_min, p_inter_norm, cube.color, cube.mirror};
+}
+
 // Intersection entre un rayon et une scene
 Hit intersect(const Scene& scene, const Point& o, const Vector& d)
 {
@@ -85,10 +116,20 @@ Hit intersect(const Scene& scene, const Point& o, const Vector& d)
             temp = h;
     }
 
+    for(unsigned i= 0 ; i < scene.cubes.size(); i++)
+    {
+        // on teste avec le cube
+        Hit h= intersect(scene.cubes[i], o, d);
+        if(h.t < temp.t)
+            temp = h;
+    }
+
     // on teste avec le plan
     Hit h= intersect(scene.plan, o, d);
     if(h.t < temp.t)
             temp = h;
+
+            
 
     return temp;
 }
@@ -100,6 +141,7 @@ Vector miroir(const Vector& n, const Vector& v)
     return v - 2*dot(n, v)*n;
 }
 
+// Creation de sources de lumiere dans un tableau (vector)
 std::vector<Source> creationSource(const Point& a, const Vector& u, const Vector& v, const Color& emission, const int n, float puissance)
 {
     float puissance_individuelle = puissance/n;
@@ -117,6 +159,7 @@ std::vector<Source> creationSource(const Point& a, const Vector& u, const Vector
     return planSources;
 }
 
+// Eclairage d'un point
 Color eclairagePoint(const Point& p, const Vector& n, const Color& color, const Scene scene) {
     
     Color pixel;
@@ -135,10 +178,11 @@ Color eclairagePoint(const Point& p, const Vector& n, const Color& color, const 
     return pixel;
 }
 
+// Affichage de l'image
 void affichage(Image& image, Scene scene) {
     float ratio = float(image.width())/float(image.height());   // ratio de l'image
     float cos_theta;
-    Point o = Point(0, 0, 0);    // position de la camera
+    Point o = Point(0, 0, 0);    // position de la camera, l'origine
 
     #pragma omp parallel for schedule(dynamic, 1)
     // Parcours de chaque pixel de l'image
@@ -237,6 +281,7 @@ void affichage(Image& image, Scene scene) {
     } 
 }
 
+// Fonction principale
 int main( )
 {
     // cree l'image resultat
@@ -244,27 +289,33 @@ int main( )
 
     // les objets
     Sphere s_rouge = {Point(0, 0, -5), 2, Red(), 0};
-    Sphere s_yellow = {Point(2, -1, -3), 1, Yellow(), 0};
-    Sphere s_green = {Point(-1.5, 0, -2.5), 0.5, Green(), 0};
+    Sphere s_yellow = {Point(2, -1, -3), 1, Yellow(), 1};
+    Sphere s_miroir = {Point(-1.5, 0, -2.5), 0.5, Green(), 0};
+
+    Cube c_bleu = {Point(0, 0, -5), 1, Color(0.5, 0.5, 1, 1), 0};
 
     // le plan
     Plan plan = {Point(0,-1,0), Vector(0,1,0), White(), 0};
 
     // les sources de lumieres
-    Source source1 = {Point(4,2,-2), 15, White()};
-    Source source2 = {Point(-4,2,-4), 10, White()};
-    std::vector<Source> panneauSources = creationSource(Point(-2,2,3), Vector(5,0,0),Vector(0,5,0), White(),10, 20);
+    Source source1 = {Point(4,2,-2), 5, Color(0.5, 1, 0.5, 1)};
+    Source source2 = {Point(-4,4,-4), 1, White()};
+    Source source3 = {Point(0,3,0), 5, White()+Blue()};
+
+    std::vector<Source> panneauSources = creationSource(Point(-2,2,3), Vector(5,0,0),Vector(0,5,0), Color(1, 0.8, 0.8, 1), 10, 20);
 
     panneauSources.push_back(source1);
     panneauSources.push_back(source2);
+    panneauSources.push_back(source3);
 
     // la scene
     Scene scene;
     scene.plan = plan;
     scene.spheres.push_back(s_rouge);
     scene.spheres.push_back(s_yellow);
-    scene.spheres.push_back(s_green);
+    scene.spheres.push_back(s_miroir);
 
+    scene.cubes.push_back(c_bleu);
 
     for (unsigned int i=0; i<panneauSources.size(); i++) {
         scene.sources.push_back(panneauSources[i]);
@@ -272,7 +323,7 @@ int main( )
 
     affichage(image,scene);
 
-    write_image(image, "rendu.png");
+    write_image(image, "img/renduImage.png");
 
     return 0;
 }
