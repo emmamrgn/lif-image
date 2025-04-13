@@ -11,8 +11,7 @@
 #include "cube.h"
 
 
-int ANTIALIASING = 3;
-// Color BACKGROUND_COLOR = Color(40, 0, 40,1);  
+int ANTIALIASING = 10;
 Color BACKGROUND_COLOR = Color(0.7,0.9,0.9,1);
 
 // Intersection entre un rayon et un plan
@@ -184,7 +183,7 @@ void affichage(Image& image, Scene scene) {
     float cos_theta;
     Point o = Point(0, 0, 0);    // position de la camera, l'origine
 
-    #pragma omp parallel for schedule(dynamic, 1)
+    // #pragma omp parallel for schedule(dynamic, 1)
     // Parcours de chaque pixel de l'image
     for(int py= 0; py < image.height(); py++)
     for(int px= 0; px < image.width(); px++)
@@ -289,10 +288,10 @@ int main( )
 
     // les objets
     Sphere s_rouge = {Point(0, 0, -5), 2, Red(), 0};
-    Sphere s_yellow = {Point(2, -1, -3), 1, Yellow(), 1};
-    Sphere s_miroir = {Point(-1.5, 0, -2.5), 0.5, Green(), 0};
+    Sphere s_miroir = {Point(3, 0, -4), 1, White(), 1};
+    Sphere s_jaune = {Point(-2, 0, -2.5), 0.5, Color(2, 1, 2, 1), 0};
 
-    Cube c_bleu = {Point(0, 0, -5), 1, Color(0.5, 0.5, 1, 1), 0};
+    Cube cube = {Point(2, 2 ,-4), 1, Blue(), 0};
 
     // le plan
     Plan plan = {Point(0,-1,0), Vector(0,1,0), White(), 0};
@@ -302,7 +301,7 @@ int main( )
     Source source2 = {Point(-4,4,-4), 1, White()};
     Source source3 = {Point(0,3,0), 5, White()+Blue()};
 
-    std::vector<Source> panneauSources = creationSource(Point(-2,2,3), Vector(5,0,0),Vector(0,5,0), Color(1, 0.8, 0.8, 1), 10, 20);
+    std::vector<Source> panneauSources = creationSource(Point(-2,2,3), Vector(5,0,0),Vector(0,5,0), White(), 10, 20);
 
     panneauSources.push_back(source1);
     panneauSources.push_back(source2);
@@ -312,10 +311,10 @@ int main( )
     Scene scene;
     scene.plan = plan;
     scene.spheres.push_back(s_rouge);
-    scene.spheres.push_back(s_yellow);
+    scene.spheres.push_back(s_jaune);
     scene.spheres.push_back(s_miroir);
 
-    scene.cubes.push_back(c_bleu);
+    scene.cubes.push_back(cube);
 
     for (unsigned int i=0; i<panneauSources.size(); i++) {
         scene.sources.push_back(panneauSources[i]);
@@ -323,7 +322,7 @@ int main( )
 
     affichage(image,scene);
 
-    write_image(image, "img/renduImage.png");
+    write_image(image, "img/rendu_final.png");
 
     return 0;
 }

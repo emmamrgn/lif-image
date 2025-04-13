@@ -18,11 +18,12 @@ Le projet est structuré comme suit :
 ## Fonctionnalités Bonus Implémentées
 
 ### 1. Matières Réfléchissantes
-- **Description** : Les objets de la scène (sphères, cubes, plans) peuvent réfléchir la lumière, simulant des effets réalistes.
+- **Description** : Les objets de la scène (sphères, cubes, plans) peuvent réfléchir ce qui l'entoure, comme un miroir.
 - **Implémentation** :
   - La structure `Hit` (dans [`hit.h`](#)) inclut un champ `mirror` représentant le pourcentage de lumière réfléchie.
   - La fonction `affichage` (dans [`projet.cpp`](#)) calcule les réflexions en utilisant la direction miroir et applique le coefficient de réflexion de Fresnel.
-- **Résultat** : Les objets réfléchissants ajoutent du réalisme à la scène, comme visible dans les images générées.
+- **Résultat** : La sphère à droite est un miroir, mais ne renvoie pas la couleur des objets...
+
 
 ### 2. Flou de Profondeur
 - **Description** : Ajout d'un effet de flou pour simuler la profondeur de champ.
@@ -46,23 +47,19 @@ Le projet est structuré comme suit :
 - **Problème** : Les calculs de direction réfractée et les indices de réfraction n'ont pas produit les résultats attendus.
 - **Conclusion** : Cette fonctionnalité reste à améliorer dans une version future.
 
-### 2. Ombres Douces
-- **Essai** : Génération d'ombres douces en utilisant des sources lumineuses étendues.
-- **Problème** : Les ombres apparaissent bruitées ou incohérentes en raison d'un échantillonnage insuffisant.
-- **Conclusion** : Nécessite une optimisation des algorithmes d'échantillonnage.
-
 ---
 
 ## Résultats Visuels
 Voici quelques images générées par le projet :
 
 1. **Réflexions** : Une sphère réfléchissante avec un plan en arrière-plan.
-   ![Réflexions](img/reflexions.png)
+   ![Réflexions](img/miroir.png)
+   ![Réflexions](img/miroir2.png)
 
 2. **Flou de Profondeur** : Une scène avec plusieurs objets à différentes distances.
    ![Flou de Profondeur](img/flou_profondeur.png)
 
-3. **Surprise - Cube** : Une scène mettant en avant un cube coloré.
+3. **Surprise - Cube** : 
    ![Cube](img/cube.png)
 
 ---
@@ -70,21 +67,5 @@ Voici quelques images générées par le projet :
 ## Conclusion
 Ce projet est une implémentation robuste d'une simulation graphique basée sur le lancer de rayons. Les fonctionnalités implémentées, comme les matières réfléchissantes et le flou de profondeur, ajoutent du réalisme à la scène. Bien que certaines expérimentations n'aient pas abouti, elles ouvrent des perspectives pour des améliorations futures.
 
----
 
-## Annexes
-- **Références** :
-    - Documentation de la bibliothèque `gKit`.
-    - Ressources en ligne sur le lancer de rayons.
-- **Glossaire** :
-    - **Ray Tracing** : Technique de rendu simulant le comportement des rayons lumineux.
-    - **Intersection** : Calcul du point où un rayon rencontre un objet.
-    - **Réflexion** : Déviation d'un rayon lumineux sur une surface réfléchissante.
-    - **Flou de Profondeur** : Effet simulant la mise au point d'une caméra.
-
----
-
-## Vérification des Fonctionnalités
-1. **Matières Réfléchissantes** : Implémentées dans `Hit` et `affichage` (voir [`projet.cpp`](#)).
-2. **Flou de Profondeur** : Géré par l'antialiasing dans `affichage`.
-3. **Cube** : Défini dans [`cube.h`](#) et géré dans `intersect` (voir [`projet.cpp`](#)).
+![Rendu Final](img/rendu_final.png)
